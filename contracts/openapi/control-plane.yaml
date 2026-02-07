@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: Background Agent Control Plane
+  version: 0.1.0
+paths:
+  /sessions:
+    post:
+      summary: Create session
+      responses:
+        "200":
+          description: Session created
+  /sessions/{id}:
+    get:
+      summary: Get session
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Session
+  /runs:
+    post:
+      summary: Create run
+      responses:
+        "200":
+          description: Run created
+  /ws/stream:
+    get:
+      summary: Stream events
+      responses:
+        "101":
+          description: WebSocket upgrade

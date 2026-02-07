@@ -1,0 +1,15 @@
+scopes:
+  - name: repo.read
+    description: Read repository files
+  - name: repo.write
+    description: Write repository files
+  - name: shell.exec
+    description: Execute shell commands in sandbox
+  - name: git.write
+    description: Create branches and commits
+  - name: ci.run
+    description: Trigger CI pipelines
+policies:
+  default_allowlist:
+    - repo.read
+    - shell.exec

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://background-agent.example/schemas/artifact.json",
+  "type": "object",
+  "required": ["id", "run_id", "type", "uri"],
+  "properties": {
+    "id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "type": {"type": "string"},
+    "uri": {"type": "string"}
+  },
+  "additionalProperties": false
+}

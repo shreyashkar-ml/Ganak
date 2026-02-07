@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://background-agent.example/schemas/tool_result.json",
+  "type": "object",
+  "required": ["id", "name", "output", "success"],
+  "properties": {
+    "id": {"type": "string"},
+    "name": {"type": "string"},
+    "output": {"type": "object"},
+    "success": {"type": "boolean"}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://background-agent.example/schemas/runner_job.json",
+  "type": "object",
+  "required": ["id", "session_id", "run_id", "snapshot_id", "created_at"],
+  "properties": {
+    "id": {"type": "string"},
+    "session_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "snapshot_id": {"type": "string"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

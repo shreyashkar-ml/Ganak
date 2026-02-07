@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://background-agent.example/schemas/repo_snapshot.json",
+  "type": "object",
+  "required": ["id", "repo_id", "commit", "created_at"],
+  "properties": {
+    "id": {"type": "string"},
+    "repo_id": {"type": "string"},
+    "commit": {"type": "string"},
+    "created_at": {"type": "string", "format": "date-time"}
+  },
+  "additionalProperties": false
+}

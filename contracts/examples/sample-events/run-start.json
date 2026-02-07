@@ -1,0 +1,10 @@
+{
+  "id": "evt_run_start_1",
+  "ts": "2024-01-01T00:00:00Z",
+  "type": "run_started",
+  "session_id": "sess_1",
+  "run_id": "run_1",
+  "payload": {
+    "prompt": "Fix failing test"
+  }
+}

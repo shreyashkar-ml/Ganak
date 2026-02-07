@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://background-agent.example/schemas/event.json",
+  "type": "object",
+  "required": ["id", "ts", "type", "session_id", "run_id", "payload"],
+  "properties": {
+    "id": {"type": "string"},
+    "ts": {"type": "string", "format": "date-time"},
+    "type": {"type": "string"},
+    "session_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "payload": {"type": "object"}
+  },
+  "additionalProperties": false
+}

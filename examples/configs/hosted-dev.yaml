@@ -1,0 +1,4 @@
+hosted:
+  control_plane_url: http://localhost:8000
+sandbox_backend: modal
+state_backend: postgres

@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def send_error(message: str) -> None:

@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def send_metric(name: str, value: float) -> None:

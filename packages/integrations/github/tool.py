@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from dataclasses import dataclass
 
@@ -15,5 +14,5 @@ def create_pull_request(pr: PullRequest) -> str:
     """Placeholder PR creation."""
     if not isinstance(pr, PullRequest):
         raise TypeError("pr must be PullRequest")
-    return "https://github.com/example/repo/pull/1"
+    return "https://github.com/ganak-ai/ganak/pull/1"
 

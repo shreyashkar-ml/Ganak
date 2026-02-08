@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from backends.backend_interface import RunnerBackend, RunnerJob
 

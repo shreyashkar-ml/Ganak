@@ -5,3 +5,11 @@ bg_agent.md
 rule.md
 
 __pycache__
+
+# uv / Python environment artifacts
+.venv/
+**/.venv/
+.python-version
+.uv/
+.uv-cache/
+.cache/uv/

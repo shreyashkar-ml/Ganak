@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import Iterable
 
@@ -29,4 +27,3 @@ class ToolRegistry:
 
     def list(self) -> Iterable[str]:
         return list(self._tools.keys())
-

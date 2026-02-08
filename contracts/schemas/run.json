@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://background-agent.example/schemas/run.json",
+  "$id": "https://ganak.example/schemas/run.json",
   "type": "object",
   "required": ["id", "session_id", "created_at", "status"],
   "properties": {

@@ -1,6 +1,6 @@
-# Background Agent
+# Ganak
 
-Hosted-first background agent with explicit boundaries so we can add self-hosted runners later without rewrites.
+Hosted-first Ganak with explicit boundaries so we can add self-hosted runners later without rewrites.
 
 ## What this is
 A control plane orchestrates sessions, prompts, and runs. A runner executes work inside sandboxes. Tools are pure connectors with scoped permissions. Every action emits structured events for replay and audit.
@@ -35,9 +35,32 @@ Sandbox + Tools
 
 ## Quickstart (local)
 1. Read `technical_overview.md` for prerequisites and setup.
-2. Start infra: `docker compose -f infra/docker-compose.yaml up -d`
-3. Run the control plane (stub server): `python packages/control-plane/src/api/app.py`
-4. Run the CLI: `python packages/cli/src/cli.py`
+2. Sync project environment: `uv sync`
+3. Start infra: `docker compose -f infra/docker-compose.yaml up -d`
+4. Run the control plane (stub server): `uv run python packages/control-plane/src/api/app.py`
+5. Run the CLI: `uv run python packages/cli/src/cli.py`
+
+Common `uv` commands:
+```bash
+uv sync
+uv run python packages/control-plane/src/api/app.py
+uv run python packages/cli/src/cli.py repo https://github.com/ganak-ai/ganak
+uv run python packages/cli/src/cli.py session ganak_repo_123
+uv run python packages/cli/src/cli.py run ganak_sess_123 "Fix failing test"
+```
+
+Control-plane scaling and performance knobs:
+- `CONTROL_PLANE_HOST` (default `0.0.0.0`)
+- `CONTROL_PLANE_PORT` (default `8000`)
+- `CONTROL_PLANE_WORKERS` (default `1`)
+- `CONTROL_PLANE_LIMIT_CONCURRENCY` (default `200`)
+- `CONTROL_PLANE_BACKLOG` (default `2048`)
+- `CONTROL_PLANE_KEEPALIVE_TIMEOUT` (default `5`)
+- `CONTROL_PLANE_STATE_BACKEND` (default `memory`)
+
+Important:
+- Keep `CONTROL_PLANE_WORKERS=1` while using `CONTROL_PLANE_STATE_BACKEND=memory`.
+- For multi-worker or multi-instance deployment, move to a shared durable state backend first.
 
 ## API surface
 - HTTP: `POST /sessions`, `GET /sessions/{id}`, `POST /runs`, `GET /runs/{id}`, `POST /repos`
@@ -64,6 +87,6 @@ Sandbox + Tools
 - `tests/e2e`: end-to-end scenario runs
 
 ## Roadmap
-- Phase 0: single-session demo using CLI and Modal backend
+- Phase 0: single-session Ganak demo using CLI and Modal backend
 - Phase 1A: event log streaming to multiple clients, hardened state backend, basic eval harness
 - Phase 1B+: web UI and full multi-session management

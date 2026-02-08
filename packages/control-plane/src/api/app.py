@@ -1,8 +1,17 @@
-from __future__ import annotations
-
-import json
-from http.server import BaseHTTPRequestHandler, HTTPServer
+import os
+import sys
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Mapping
+
+import uvicorn
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
+
+# Ensure `api.*` imports resolve when launched from repository root.
+_SRC_ROOT = Path(__file__).resolve().parents[1]
+if str(_SRC_ROOT) not in sys.path:
+    sys.path.insert(0, str(_SRC_ROOT))
 
 from api.routes.health import health_status
 from api.routes.repos import create_repo
@@ -12,75 +21,102 @@ from api.state import ControlPlaneState
 from api.ws.stream import stream_events
 
 
-class ControlPlaneHandler(BaseHTTPRequestHandler):
-    state: ControlPlaneState
-
-    def _read_json(self) -> Mapping[str, object]:
-        length = int(self.headers.get("Content-Length", "0"))
-        data = self.rfile.read(length).decode("utf-8") if length else "{}"
-        try:
-            parsed = json.loads(data)
-        except json.JSONDecodeError:
-            parsed = {}
-        if not isinstance(parsed, dict):
-            return {}
-        return parsed
-
-    def _write_json(self, status: int, payload: Mapping[str, object]) -> None:
-        body = json.dumps(payload).encode("utf-8")
-        self.send_response(status)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
-
-    def do_GET(self) -> None:
-        if self.path == "/health":
-            self._write_json(200, health_status())
-            return
-        if self.path.startswith("/events/"):
-            session_id = self.path.split("/")[-1]
-            payload = stream_events(self.state, session_id)
-            self._write_json(200, payload)
-            return
-        self._write_json(404, {"error": "not_found"})
-
-    def do_POST(self) -> None:
-        if self.path == "/sessions":
-            payload = self._read_json()
-            session = create_session(self.state, payload.get("repo_id", "repo"))
-            self._write_json(200, session)
-            return
-        if self.path == "/runs":
-            payload = self._read_json()
-            run = create_run(
-                self.state,
-                payload.get("session_id", ""),
-                payload.get("prompt", ""),
-            )
-            self._write_json(200, run)
-            return
-        if self.path == "/repos":
-            payload = self._read_json()
-            repo = create_repo(self.state, payload.get("url", ""))
-            self._write_json(200, repo)
-            return
-        self._write_json(404, {"error": "not_found"})
+@dataclass(frozen=True)
+class ServerConfig:
+    host: str = "0.0.0.0"
+    port: int = 8000
+    workers: int = 1
+    limit_concurrency: int = 200
+    backlog: int = 2048
+    keepalive_timeout_s: int = 5
+    state_backend: str = "memory"
 
 
-def _make_handler(state: ControlPlaneState):
-    class BoundHandler(ControlPlaneHandler):
-        pass
-
-    BoundHandler.state = state
-    return BoundHandler
+class SessionCreateRequest(BaseModel):
+    repo_id: str
 
 
-def serve(host: str = "0.0.0.0", port: int = 8000) -> None:
-    """Run a minimal control-plane HTTP server."""
-    state = ControlPlaneState()
-    server = HTTPServer((host, port), _make_handler(state))
-    server.serve_forever()
+class RunCreateRequest(BaseModel):
+    session_id: str
+    prompt: str
+
+
+class RepoCreateRequest(BaseModel):
+    url: str
+
+
+def load_server_config() -> ServerConfig:
+    """Load runtime configuration from environment."""
+    return ServerConfig(
+        host=os.getenv("CONTROL_PLANE_HOST", "0.0.0.0"),
+        port=int(os.getenv("CONTROL_PLANE_PORT", "8000")),
+        workers=int(os.getenv("CONTROL_PLANE_WORKERS", "1")),
+        limit_concurrency=int(os.getenv("CONTROL_PLANE_LIMIT_CONCURRENCY", "200")),
+        backlog=int(os.getenv("CONTROL_PLANE_BACKLOG", "2048")),
+        keepalive_timeout_s=int(os.getenv("CONTROL_PLANE_KEEPALIVE_TIMEOUT", "5")),
+        state_backend=os.getenv("CONTROL_PLANE_STATE_BACKEND", "memory"),
+    )
+
+
+def validate_server_config(config: ServerConfig) -> None:
+    """Prevent unsafe scale-out for in-memory state mode."""
+    if config.state_backend == "memory" and config.workers > 1:
+        raise ValueError(
+            "CONTROL_PLANE_WORKERS > 1 requires a durable shared state backend. "
+            "Set CONTROL_PLANE_STATE_BACKEND to a non-memory backend before scaling workers."
+        )
+
+
+app = FastAPI(title="Ganak Control Plane", version="0.1.0")
+app.state.control_plane_state = ControlPlaneState()
+
+
+def _state(request: Request) -> ControlPlaneState:
+    state = request.app.state.control_plane_state
+    if not isinstance(state, ControlPlaneState):
+        raise TypeError("app.state.control_plane_state must be ControlPlaneState")
+    return state
+
+
+@app.get("/health")
+def get_health() -> dict[str, str]:
+    return health_status()
+
+
+@app.post("/sessions")
+def post_session(payload: SessionCreateRequest, request: Request) -> Mapping[str, str]:
+    return create_session(_state(request), payload.repo_id)
+
+
+@app.post("/runs")
+def post_run(payload: RunCreateRequest, request: Request) -> Mapping[str, str]:
+    return create_run(_state(request), payload.session_id, payload.prompt)
+
+
+@app.post("/repos")
+def post_repo(payload: RepoCreateRequest, request: Request) -> Mapping[str, str]:
+    return create_repo(_state(request), payload.url)
+
+
+@app.get("/events/{session_id}")
+def get_events(session_id: str, request: Request) -> Mapping[str, object]:
+    return stream_events(_state(request), session_id)
+
+
+def serve() -> None:
+    """Run the control-plane API with production-friendly server options."""
+    config = load_server_config()
+    validate_server_config(config)
+    uvicorn.run(
+        "api.app:app",
+        app_dir=str(_SRC_ROOT),
+        host=config.host,
+        port=config.port,
+        workers=config.workers,
+        limit_concurrency=config.limit_concurrency,
+        backlog=config.backlog,
+        timeout_keep_alive=config.keepalive_timeout_s,
+    )
 
 
 if __name__ == "__main__":

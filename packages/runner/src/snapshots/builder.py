@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 
@@ -20,4 +18,3 @@ def build_snapshot(request: SnapshotRequest) -> SnapshotResult:
         raise TypeError("request must be SnapshotRequest")
     snapshot_id = f"{request.repo_id}-{request.commit}"
     return SnapshotResult(snapshot_id=snapshot_id)
-

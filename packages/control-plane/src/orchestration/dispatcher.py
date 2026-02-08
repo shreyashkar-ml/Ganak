@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 
 from orchestration.limits import ConcurrencyLimits
@@ -18,4 +16,3 @@ def dispatch(request: DispatchRequest, limits: ConcurrencyLimits) -> bool:
     if not isinstance(limits, ConcurrencyLimits):
         raise TypeError("limits must be ConcurrencyLimits")
     return limits.can_dispatch()
-

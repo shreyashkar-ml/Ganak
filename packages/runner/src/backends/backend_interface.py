@@ -1,7 +1,5 @@
-from __future__ import annotations
-
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Protocol
 
 
 @dataclass(frozen=True)
@@ -12,12 +10,13 @@ class RunnerJob:
     snapshot_id: str
 
 
-class RunnerBackend(Protocol):
+class RunnerBackend(ABC):
     """Backend interface for executing runner jobs."""
 
+    @abstractmethod
     def submit_job(self, job: RunnerJob) -> None:
-        ...
+        raise NotImplementedError
 
+    @abstractmethod
     def cancel_job(self, job_id: str) -> None:
-        ...
-
+        raise NotImplementedError

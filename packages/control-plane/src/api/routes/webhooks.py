@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def handle_webhook(event: dict) -> None:

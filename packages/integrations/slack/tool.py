@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def send_message(channel: str, text: str) -> bool:

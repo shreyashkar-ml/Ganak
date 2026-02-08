@@ -1,4 +1,4 @@
 hosted:
-  control_plane_url: https://api.background-agent.example
+  control_plane_url: https://api.ganak.example
 sandbox_backend: modal
 state_backend: postgres

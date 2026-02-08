@@ -2,8 +2,8 @@
   "id": "evt_tool_result_1",
   "ts": "2024-01-01T00:00:02Z",
   "type": "tool_result",
-  "session_id": "sess_1",
-  "run_id": "run_1",
+  "session_id": "ganak_sess_1",
+  "run_id": "ganak_run_1",
   "payload": {
     "id": "tool_call_1",
     "name": "shell.exec",

@@ -1,8 +1,5 @@
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import Dict, List, Mapping
-
 
 @dataclass
 class ControlPlaneState:
@@ -10,4 +7,3 @@ class ControlPlaneState:
     runs: Dict[str, Mapping[str, str]] = field(default_factory=dict)
     events: List[Mapping[str, object]] = field(default_factory=list)
     repos: Dict[str, Mapping[str, str]] = field(default_factory=dict)
-

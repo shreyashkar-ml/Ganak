@@ -1,7 +1,6 @@
-from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Protocol
 
 
 @dataclass(frozen=True)
@@ -11,7 +10,7 @@ class ExecResult:
     stderr: str
 
 
-class Executor(Protocol):
+class Executor(ABC):
+    @abstractmethod
     def run(self, command: str, timeout_s: int) -> ExecResult:
-        ...
-
+        raise NotImplementedError

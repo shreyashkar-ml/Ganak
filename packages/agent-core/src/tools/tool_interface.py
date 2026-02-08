@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any, Callable, Mapping
 
@@ -24,4 +22,3 @@ class Tool:
         if not isinstance(payload, Mapping):
             raise TypeError("payload must be a mapping")
         return self.handler(payload)
-

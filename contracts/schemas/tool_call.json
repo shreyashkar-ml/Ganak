@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://background-agent.example/schemas/tool_call.json",
+  "$id": "https://ganak.example/schemas/tool_call.json",
   "type": "object",
   "required": ["id", "name", "input", "scopes"],
   "properties": {

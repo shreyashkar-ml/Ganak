@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def log_event(message: str) -> None:

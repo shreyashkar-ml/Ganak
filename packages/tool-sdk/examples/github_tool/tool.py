@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 from typing import Mapping, Any
 
@@ -23,5 +22,4 @@ def build_tool() -> Tool:
 def run_example() -> Mapping[str, Any]:
     tool = build_tool()
     policy = ScopePolicy(allowed={"git.write"})
-    return tool.run({"repo": "org/repo", "title": "Example"}, policy)
-
+    return tool.run({"repo": "ganak-ai/ganak", "title": "Ganak Example"}, policy)

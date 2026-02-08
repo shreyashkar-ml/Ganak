@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: Background Agent Control Plane
+  title: Ganak Control Plane
   version: 0.1.0
 paths:
   /sessions:
@@ -33,3 +33,4 @@ paths:
       responses:
         "101":
           description: WebSocket upgrade
+          

@@ -1,7 +1,6 @@
-from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Protocol
 
 
 @dataclass(frozen=True)
@@ -11,15 +10,17 @@ class ShellResult:
     stderr: str
 
 
-class SandboxProxy(Protocol):
+class SandboxProxy(ABC):
     """Backend interface for executing operations inside a sandbox."""
 
+    @abstractmethod
     def run(self, command: str, timeout_s: int) -> ShellResult:
-        ...
+        raise NotImplementedError
 
+    @abstractmethod
     def read_file(self, path: str) -> str:
-        ...
+        raise NotImplementedError
 
+    @abstractmethod
     def write_file(self, path: str, content: str) -> None:
-        ...
-
+        raise NotImplementedError

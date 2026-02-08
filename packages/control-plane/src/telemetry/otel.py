@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def emit_trace(name: str) -> None:

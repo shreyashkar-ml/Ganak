@@ -1,4 +1,3 @@
-from __future__ import annotations
 
 
 def trigger_pipeline(pipeline: str) -> str:

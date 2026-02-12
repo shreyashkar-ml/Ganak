@@ -13,12 +13,9 @@ _SRC_ROOT = Path(__file__).resolve().parents[1]
 if str(_SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(_SRC_ROOT))
 
-from api.routes.health import health_status
-from api.routes.repos import create_repo
-from api.routes.runs import create_run
-from api.routes.sessions import create_session
+from api.http_routes import create_repo, create_run, create_session, health_status
 from api.state import ControlPlaneState
-from api.ws.stream import stream_events
+from api.ws_stream import stream_events
 
 
 @dataclass(frozen=True)

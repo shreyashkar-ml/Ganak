@@ -10,7 +10,7 @@ from protocol.events import (
     event_step_finished,
     event_step_started,
 )
-from state.event_log import EventLog
+from state_stores import EventLog
 from tools.tool_registry import ToolRegistry
 
 
@@ -82,4 +82,3 @@ def _execute_step(step: PlanStep, tool_registry: ToolRegistry) -> None:
         return
     tool = tool_registry.get(step.tool_name)
     tool.run(step.tool_input or {})
-

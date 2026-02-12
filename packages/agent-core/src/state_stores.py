@@ -1,0 +1,90 @@
+from dataclasses import dataclass, field
+from typing import Dict, Iterable, Mapping
+
+
+@dataclass
+class EventLog:
+    _events: list[Mapping[str, object]] = field(default_factory=list)
+
+    def append(self, event: Mapping[str, object]) -> None:
+        """Append a serialized event to the log."""
+        if not isinstance(event, Mapping):
+            raise TypeError("event must be a mapping")
+        self._events.append(event)
+
+    def list(self) -> Iterable[Mapping[str, object]]:
+        return list(self._events)
+
+
+@dataclass(frozen=True)
+class RunRecord:
+    run_id: str
+    session_id: str
+    status: str
+
+
+@dataclass
+class RunStore:
+    _runs: Dict[str, RunRecord] = field(default_factory=dict)
+
+    def create(self, run: RunRecord) -> None:
+        """Create a run record."""
+        if not isinstance(run, RunRecord):
+            raise TypeError("run must be RunRecord")
+        if run.run_id in self._runs:
+            raise ValueError(f"run exists: {run.run_id}")
+        self._runs[run.run_id] = run
+
+    def get(self, run_id: str) -> RunRecord:
+        """Get a run record by id."""
+        if not isinstance(run_id, str):
+            raise TypeError("run_id must be str")
+        if run_id not in self._runs:
+            raise KeyError(f"run not found: {run_id}")
+        return self._runs[run_id]
+
+    def update_status(self, run_id: str, status: str) -> None:
+        """Update run status."""
+        if not isinstance(status, str):
+            raise TypeError("status must be str")
+        record = self.get(run_id)
+        self._runs[run_id] = RunRecord(run_id=record.run_id, session_id=record.session_id, status=status)
+
+
+@dataclass(frozen=True)
+class SessionRecord:
+    session_id: str
+    repo_id: str
+    status: str
+
+
+@dataclass
+class SessionStore:
+    _sessions: Dict[str, SessionRecord] = field(default_factory=dict)
+
+    def create(self, session: SessionRecord) -> None:
+        """Create a session record."""
+        if not isinstance(session, SessionRecord):
+            raise TypeError("session must be SessionRecord")
+        if session.session_id in self._sessions:
+            raise ValueError(f"session exists: {session.session_id}")
+        self._sessions[session.session_id] = session
+
+    def get(self, session_id: str) -> SessionRecord:
+        """Get a session record by id."""
+        if not isinstance(session_id, str):
+            raise TypeError("session_id must be str")
+        if session_id not in self._sessions:
+            raise KeyError(f"session not found: {session_id}")
+        return self._sessions[session_id]
+
+    def update_status(self, session_id: str, status: str) -> None:
+        """Update session status."""
+        if not isinstance(status, str):
+            raise TypeError("status must be str")
+        record = self.get(session_id)
+        self._sessions[session_id] = SessionRecord(
+            session_id=record.session_id,
+            repo_id=record.repo_id,
+            status=status,
+        )

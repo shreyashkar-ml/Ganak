@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Iterable
 
-from tools.tool_sandbox_proxy import SandboxProxy
+from tools import SandboxProxy
 
 
 @dataclass(frozen=True)

@@ -38,15 +38,15 @@ Sandbox + Tools
 2. Sync project environment: `uv sync`
 3. Start infra: `docker compose -f infra/docker-compose.yaml up -d`
 4. Run the control plane (stub server): `uv run python packages/control-plane/src/api/app.py`
-5. Run the CLI: `uv run python packages/cli/src/cli.py`
+5. Run the CLI: `uv run python packages/cli/main.py`
 
 Common `uv` commands:
 ```bash
 uv sync
 uv run python packages/control-plane/src/api/app.py
-uv run python packages/cli/src/cli.py repo https://github.com/ganak-ai/ganak
-uv run python packages/cli/src/cli.py session ganak_repo_123
-uv run python packages/cli/src/cli.py run ganak_sess_123 "Fix failing test"
+uv run python packages/cli/main.py repo https://github.com/ganak-ai/ganak
+uv run python packages/cli/main.py session ganak_repo_123
+uv run python packages/cli/main.py run ganak_sess_123 "Fix failing test"
 ```
 
 Control-plane scaling and performance knobs:

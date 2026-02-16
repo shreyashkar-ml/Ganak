@@ -2,15 +2,11 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Callable, Iterable, Mapping
 
+from shared_models import ToolContract
+
 ToolHandler = Callable[[Mapping[str, Any]], Mapping[str, Any]]
 
-
-@dataclass(frozen=True)
-class ToolSpec:
-    name: str
-    input_schema: Mapping[str, Any]
-    output_schema: Mapping[str, Any]
-    scopes: list[str]
+ToolSpec = ToolContract
 
 
 @dataclass

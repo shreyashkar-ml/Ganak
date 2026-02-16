@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Iterable
 
 from protocol import event_run_finished, event_run_started, event_step_finished, event_step_started
-from state_stores import EventLog
+from shared_models import EventLog
 from tools import ToolRegistry
 
 

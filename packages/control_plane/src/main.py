@@ -2,20 +2,7 @@ import uuid
 from dataclasses import dataclass, field
 from typing import Mapping
 
-
-@dataclass(frozen=True)
-class SessionRecord:
-    id: str
-    repo_id: str
-    status: str
-
-
-@dataclass(frozen=True)
-class RunRecord:
-    id: str
-    session_id: str
-    prompt: str
-    status: str
+from shared_models import RunRecord, SessionRecord
 
 
 @dataclass
@@ -108,6 +95,9 @@ class ControlPlane:
         self.state.prompt_queue.enqueue(run_id)
         self.state.events.append(self._make_event("run_queued", session_id, run_id, {"prompt": prompt}))
         return {"id": run.id, "session_id": run.session_id, "status": run.status}
+
+    def process_queue(self) -> bool:
+        """Dispatch one run from the queue if concurrency limits allow."""
 
     def create_repo(self, url: str) -> Mapping[str, str]:
         if not isinstance(url, str):

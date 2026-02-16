@@ -3,13 +3,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Iterable
 
-
-@dataclass(frozen=True)
-class RunnerJob:
-    job_id: str
-    session_id: str
-    run_id: str
-    snapshot_id: str
+from shared_models import RunnerJob, SnapshotRequest, SnapshotResult
 
 
 class RunnerBackend(ABC):
@@ -58,17 +52,6 @@ class K8sBackend(RunnerBackend):
         if not isinstance(job_id, str):
             raise TypeError("job_id must be str")
         raise NotImplementedError("K8s backend not implemented")
-
-
-@dataclass(frozen=True)
-class SnapshotRequest:
-    repo_id: str
-    commit: str
-
-
-@dataclass(frozen=True)
-class SnapshotResult:
-    snapshot_id: str
 
 
 def build_snapshot(request: SnapshotRequest) -> SnapshotResult:

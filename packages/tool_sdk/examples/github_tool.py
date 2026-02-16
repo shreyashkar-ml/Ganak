@@ -1,8 +1,8 @@
 
 from typing import Mapping, Any
 
-from tool_sdk import Tool, ToolDefinition
-from tool_sdk import ScopePolicy
+from main import Tool, ToolDefinition
+from main import ScopePolicy
 
 
 def handle(payload: Mapping[str, Any]) -> Mapping[str, Any]:

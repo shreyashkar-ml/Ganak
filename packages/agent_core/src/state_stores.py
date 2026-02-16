@@ -1,26 +1,7 @@
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, Mapping
+from typing import Dict
 
-
-@dataclass
-class EventLog:
-    _events: list[Mapping[str, object]] = field(default_factory=list)
-
-    def append(self, event: Mapping[str, object]) -> None:
-        """Append a serialized event to the log."""
-        if not isinstance(event, Mapping):
-            raise TypeError("event must be a mapping")
-        self._events.append(event)
-
-    def list(self) -> Iterable[Mapping[str, object]]:
-        return list(self._events)
-
-
-@dataclass(frozen=True)
-class RunRecord:
-    run_id: str
-    session_id: str
-    status: str
+from shared_models import EventLog, RunRecord, SessionRecord
 
 
 @dataclass
@@ -31,9 +12,9 @@ class RunStore:
         """Create a run record."""
         if not isinstance(run, RunRecord):
             raise TypeError("run must be RunRecord")
-        if run.run_id in self._runs:
-            raise ValueError(f"run exists: {run.run_id}")
-        self._runs[run.run_id] = run
+        if run.id in self._runs:
+            raise ValueError(f"run exists: {run.id}")
+        self._runs[run.id] = run
 
     def get(self, run_id: str) -> RunRecord:
         """Get a run record by id."""
@@ -48,14 +29,12 @@ class RunStore:
         if not isinstance(status, str):
             raise TypeError("status must be str")
         record = self.get(run_id)
-        self._runs[run_id] = RunRecord(run_id=record.run_id, session_id=record.session_id, status=status)
-
-
-@dataclass(frozen=True)
-class SessionRecord:
-    session_id: str
-    repo_id: str
-    status: str
+        self._runs[run_id] = RunRecord(
+            id=record.id,
+            session_id=record.session_id,
+            prompt=record.prompt,
+            status=status,
+        )
 
 
 @dataclass
@@ -66,9 +45,9 @@ class SessionStore:
         """Create a session record."""
         if not isinstance(session, SessionRecord):
             raise TypeError("session must be SessionRecord")
-        if session.session_id in self._sessions:
-            raise ValueError(f"session exists: {session.session_id}")
-        self._sessions[session.session_id] = session
+        if session.id in self._sessions:
+            raise ValueError(f"session exists: {session.id}")
+        self._sessions[session.id] = session
 
     def get(self, session_id: str) -> SessionRecord:
         """Get a session record by id."""
@@ -84,7 +63,7 @@ class SessionStore:
             raise TypeError("status must be str")
         record = self.get(session_id)
         self._sessions[session_id] = SessionRecord(
-            session_id=record.session_id,
+            id=record.id,
             repo_id=record.repo_id,
             status=status,
         )

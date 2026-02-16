@@ -1,4 +1,4 @@
-# tool-sdk
+# tool_sdk
 
 Provides primitives for:
 - Schemas
